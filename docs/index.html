@@ -322,7 +322,7 @@
   </svg>
   <div class="wrap">
     <h1>Every Perth tee time, <em>one search</em> away.</h1>
-    <p class="lede">Stop checking a dozen booking pages one by one. Pick a date, a radius and how many holes — we search every course at once and show you what's actually free.</p>
+    <p class="lede">Stop checking a dozen booking pages one by one. Pick a date, a radius and how many holes — we search every course at once and show you what's actually available.</p>
     <a class="cta-button" href="https://whereweplaying.streamlit.app">Find a tee time →</a>
 
     <div class="stat-strip">
@@ -390,6 +390,21 @@
   </div>
 </section>
 
+<section>
+  <div class="wrap">
+    <div class="scorecard reveal" style="padding:2.4rem; text-align:center;">
+      <span class="eyebrow">Coming soon</span>
+      <h2 style="margin:0.6rem 0 1.6rem 0; font-size:clamp(1.7rem, 3vw, 2.2rem);">Favourite course booked out? No worries — soon you'll be able to add alerts and we'll let you know the moment a spot opens up.</h2>
+      <form id="waitlist-form" style="display:flex; gap:0.6rem; justify-content:center; flex-wrap:wrap;">
+        <input type="email" id="waitlist-email" required placeholder="you@example.com"
+          style="padding:0.7rem 1rem; border:1px solid #3F6B3F; border-radius:4px; font-family:'Jost',sans-serif; min-width:240px; font-size:1rem;">
+        <button type="submit" class="cta-button" style="border:none; cursor:pointer; font-size:1rem;">Notify me</button>
+      </form>
+      <p id="waitlist-message" style="margin-top:1rem; font-size:0.9rem; min-height:1.2rem;"></p>
+    </div>
+  </div>
+</section>
+
 <section class="alt">
   <div class="wrap">
     <div class="section-head reveal">
@@ -439,6 +454,45 @@
   } else {
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
   }
+</script>
+
+<script>
+  // Submits directly to Supabase from the browser — same public
+  // "publishable" key already used elsewhere in this project (safe to
+  // expose client-side by design, protected by Supabase's own
+  // insert-only permissions on this specific table, same pattern
+  // already proven working on the real search tool).
+  const SUPABASE_URL = 'https://ibtcrfqkhvxeoqlwzvtg.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_ZCr0gvWia-9IyRb917b8YQ_ftgJi8uv';
+
+  document.getElementById('waitlist-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const email = document.getElementById('waitlist-email').value;
+    const messageEl = document.getElementById('waitlist-message');
+
+    fetch(SUPABASE_URL + '/rest/v1/alert_waitlist', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: email }),
+    })
+      .then(function (res) {
+        if (res.ok) {
+          messageEl.textContent = "You're on the list! We'll email you the moment alerts go live.";
+          messageEl.style.color = '#3F6B3F';
+          document.getElementById('waitlist-form').reset();
+        } else {
+          messageEl.textContent = 'Something went wrong — please try again.';
+          messageEl.style.color = '#b33';
+        }
+      })
+      .catch(function () {
+        messageEl.textContent = 'Something went wrong — please try again.';
+        messageEl.style.color = '#b33';
+      });
+  });
 </script>
 
 </body>
