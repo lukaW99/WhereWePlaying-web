@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/full-badge-logo.png">
+<link rel="apple-touch-icon" href="/full-badge-logo.png">
+<title>WhereWePlaying — Tee Time Shared With You</title>
+<meta name="description" content="Someone shared a Perth tee time with you via WhereWePlaying.">
+<meta property="og:title" content="WhereWePlaying — Perth Tee Time Finder">
+<meta property="og:description" content="Someone found a tee time and wanted you to see it. Tap through for the details.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://whereweplaying.com/share.html">
+<meta property="og:image" content="https://whereweplaying.com/full-badge-logo.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="WhereWePlaying — Perth Tee Time Finder">
+<meta name="twitter:description" content="Someone found a tee time and wanted you to see it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #3F6B3F;
+    --green-darker: #294A29;
+    --parchment: #FBFAF6;
+    --sage: #E9EFE4;
+    --gold: #C9A227;
+    --ink: #20281E;
+    --cream-text: #F7F5EF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: 'Jost', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  h1, .display {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 700;
+    color: var(--green-deep);
+  }
+  .card {
+    max-width: 420px;
+    width: 100%;
+    background: #FFFFFF;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(41,74,41,0.12);
+  }
+  .card-header {
+    background: var(--green-deep);
+    padding: 1.8rem;
+    text-align: center;
+  }
+  .card-header img { width: 70px; height: 70px; display: block; margin: 0 auto; }
+  .card-body { padding: 1.8rem; }
+  .eyebrow {
+    font-family: 'Jost', sans-serif;
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+  h1#course-name { font-size: 1.6rem; margin-bottom: 1.2rem; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+  td { padding: 0.6rem 0; font-size: 0.95rem; border-top: 1px solid var(--sage); }
+  td.label { color: #5A5A52; }
+  td.value { text-align: right; font-weight: 600; }
+  tr:first-child td { border-top: none; }
+  .cta-button {
+    display: block;
+    text-align: center;
+    background: var(--green-deep);
+    color: var(--cream-text);
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.9rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+  .secondary-link {
+    display: block;
+    text-align: center;
+    color: #5A5A52;
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+  .fallback { text-align: center; color: #5A5A52; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <img src="/full-badge-logo.png" alt="Where we playing?">
+  </div>
+  <div class="card-body" id="content">
+    <p class="fallback">Loading tee time details...</p>
+  </div>
+</div>
+
+<script>
+  // Escapes dynamic values before inserting into the page — these come
+  // from URL parameters, which anyone could technically craft a custom
+  // version of, so this guards against a manipulated link trying to
+  // inject something malicious into this page.
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const course = params.get('course');
+  const time = params.get('time');
+  const date = params.get('date');
+  const category = params.get('category');
+  const bookUrl = params.get('book');
+
+  const contentEl = document.getElementById('content');
+
+  if (course && bookUrl) {
+    contentEl.innerHTML = `
+      <span class="eyebrow">Tee time shared with you</span>
+      <h1 id="course-name">${escapeHtml(course)}</h1>
+      <table>
+        <tr><td class="label">Date</td><td class="value">${escapeHtml(date || '—')}</td></tr>
+        <tr><td class="label">Time</td><td class="value">${escapeHtml(time || '—')}</td></tr>
+        <tr><td class="label">Category</td><td class="value">${escapeHtml(category || '—')}</td></tr>
+      </table>
+      <a class="cta-button" href="${escapeHtml(bookUrl)}" target="_blank">Book now &rarr;</a>
+      <a class="secondary-link" href="https://whereweplaying.streamlit.app">Search more Perth tee times &rarr;</a>
+    `;
+  } else {
+    // No valid details in the URL — fall back gracefully rather than
+    // showing a broken/empty page.
+    contentEl.innerHTML = `
+      <span class="eyebrow">Where we playing?</span>
+      <h1 id="course-name">Find your next tee time</h1>
+      <p class="fallback" style="margin-bottom:1.2rem;">This link didn't include tee time details — but you can still search live availability across 20+ Perth golf courses.</p>
+      <a class="cta-button" href="https://whereweplaying.streamlit.app">Search tee times &rarr;</a>
+    `;
+  }
+</script>
+
+</body>
+</html>
