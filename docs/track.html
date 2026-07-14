@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Redirecting to booking page...</title>
+<style>
+  body {
+    font-family: 'Jost', Arial, sans-serif;
+    background: #FBFAF6;
+    color: #20281E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+  p { font-size: 0.95rem; color: #5A5A52; }
+</style>
+</head>
+<body>
+
+<p>Taking you to the booking page...</p>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const course = params.get('course');
+  const date = params.get('date');
+  const time = params.get('time');
+  const category = params.get('category');
+  const bookUrl = params.get('book');
+
+  const SUPABASE_URL = 'https://ibtcrfqkhvxeoqlwzvtg.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_ZCr0gvWia-9IyRb917b8YQ_ftgJi8uv';
+
+  if (bookUrl) {
+    // keepalive:true is the key detail here — without it, the browser
+    // can cancel this request mid-flight the instant we redirect away,
+    // since we're navigating almost immediately after firing it. This
+    // flag specifically tells the browser to let the request finish
+    // sending even after the page starts unloading — the correct,
+    // purpose-built solution for "log this, then leave immediately",
+    // rather than a workaround.
+    fetch(SUPABASE_URL + '/rest/v1/click_events', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        course: course,
+        tee_date: date,
+        tee_time: time,
+        category: category,
+        booking_url: bookUrl,
+      }),
+      keepalive: true,
+    }).catch(function () {});
+
+    window.location.href = bookUrl;
+  } else {
+    // No valid booking URL in the link — send them somewhere sensible
+    // rather than leaving a broken/blank page.
+    window.location.href = 'https://whereweplaying.streamlit.app';
+  }
+</script>
+
+</body>
+</html>
