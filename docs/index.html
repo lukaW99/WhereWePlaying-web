@@ -19,8 +19,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --green-deep: #3F6B3F;
-    --green-darker: #294A29;
+    --green-deep: #335438;
+    --green-darker: #243B27;
     --parchment: #FBFAF6;
     --sage: #E9EFE4;
     --gold: #C9A227;
@@ -108,7 +108,7 @@
   /* ---------- Hero ---------- */
   .hero {
     position: relative;
-    padding: 3.5rem 0 4.5rem;
+    padding: 0 0 4.5rem;
     overflow: hidden;
   }
   .hero-ball-bg {
@@ -283,6 +283,34 @@
   @media (max-width: 720px) {
     .steps { grid-template-columns: 1fr; }
     .hero-ball-bg { display: none; }
+
+    header.site { padding: 1.8rem 0 1.2rem; }
+    header.site .wrap {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+    }
+    .brand {
+      justify-content: center;
+      gap: 0.7rem;
+      width: 100%;
+    }
+    .brand img {
+      width: 22vw;
+      height: 22vw;
+      max-width: 100px;
+      max-height: 100px;
+    }
+    .brand-name {
+      font-size: 11vw;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .header-cta {
+      display: block;
+      text-align: center;
+      width: 100%;
+    }
   }
 </style>
 </head>
@@ -300,7 +328,7 @@
 
 <section class="hero">
   <svg class="hero-ball-bg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="150" cy="150" r="140" fill="none" stroke="#3F6B3F" stroke-width="2"/>
+    <circle cx="150" cy="150" r="140" fill="none" stroke="#335438" stroke-width="2"/>
   </svg>
   <div class="wrap">
     <h1>Every Perth tee time, <em>one search</em> away.</h1>
@@ -379,7 +407,7 @@
       <h2 style="margin:0.6rem 0 1.6rem 0; font-size:clamp(1.7rem, 3vw, 2.2rem);">Favourite course booked out? No worries — soon you'll be able to add alerts and we'll let you know the moment a spot opens up.</h2>
       <form id="waitlist-form" style="display:flex; gap:0.6rem; justify-content:center; flex-wrap:wrap;">
         <input type="email" id="waitlist-email" required placeholder="you@example.com"
-          style="padding:0.7rem 1rem; border:1px solid #3F6B3F; border-radius:4px; font-family:'Jost',sans-serif; min-width:240px; font-size:1rem;">
+          style="padding:0.7rem 1rem; border:1px solid #335438; border-radius:4px; font-family:'Jost',sans-serif; min-width:240px; font-size:1rem;">
         <button type="submit" class="cta-button" style="border:none; cursor:pointer; font-size:1rem;">Notify me</button>
       </form>
       <p id="waitlist-message" style="margin-top:1rem; font-size:0.9rem; min-height:1.2rem;"></p>
@@ -464,7 +492,7 @@
       .then(function (res) {
         if (res.ok) {
           messageEl.textContent = "You're on the list! We'll email you the moment alerts go live.";
-          messageEl.style.color = '#3F6B3F';
+          messageEl.style.color = '#335438';
           document.getElementById('waitlist-form').reset();
         } else {
           messageEl.textContent = 'Something went wrong — please try again.';
