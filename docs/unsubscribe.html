@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="/full-badge-logo.png">
+<title>Unsubscribe — WhereWePlaying</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #3F6B3F;
+    --parchment: #FBFAF6;
+    --gold: #C9A227;
+    --ink: #20281E;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--parchment);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1.5rem;
+  }
+  .card {
+    max-width: 420px;
+    width: 100%;
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 2.4rem;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(41,74,41,0.1);
+  }
+  img { width: 70px; height: 70px; margin-bottom: 1.2rem; }
+  h1 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 700;
+    color: var(--green-deep);
+    font-size: 1.6rem;
+    margin-bottom: 0.8rem;
+  }
+  p { color: #5A5A52; font-size: 0.95rem; line-height: 1.5; }
+  a.back-link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: var(--green-deep);
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <img src="/full-badge-logo.png" alt="Where we playing?">
+  <div id="content">
+    <p>Processing your request...</p>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://ibtcrfqkhvxeoqlwzvtg.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_ZCr0gvWia-9IyRb917b8YQ_ftgJi8uv';
+
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  const contentEl = document.getElementById('content');
+
+  if (!token) {
+    contentEl.innerHTML = `
+      <h1>Something's not right</h1>
+      <p>This link is missing some information. If you're trying to unsubscribe, please email whereweplaying@gmail.com and we'll take care of it directly.</p>
+    `;
+  } else {
+    fetch(SUPABASE_URL + '/rest/v1/alert_subscriptions?unsubscribe_token=eq.' + encodeURIComponent(token), {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation',
+      },
+      body: JSON.stringify({ active: false }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (result) {
+        if (result.ok && result.data && result.data.length > 0) {
+          contentEl.innerHTML = `
+            <h1>You're unsubscribed</h1>
+            <p>You won't receive any more tee time alerts for this search. If this was a mistake, just head back and set up a new alert any time.</p>
+            <a class="back-link" href="https://whereweplaying.streamlit.app">&larr; Back to WhereWePlaying</a>
+          `;
+        } else {
+          contentEl.innerHTML = `
+            <h1>Link already used or invalid</h1>
+            <p>This unsubscribe link doesn't match an active alert — it may have already been used, or the alert may have already ended. If you're still getting emails, contact whereweplaying@gmail.com and we'll sort it out.</p>
+          `;
+        }
+      })
+      .catch(function () {
+        contentEl.innerHTML = `
+          <h1>Something went wrong</h1>
+          <p>We couldn't process this right now. Please try again shortly, or email whereweplaying@gmail.com and we'll unsubscribe you directly.</p>
+        `;
+      });
+  }
+</script>
+
+</body>
+</html>
